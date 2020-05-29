@@ -1,12 +1,10 @@
 # Google Software Product Sprint
 
-This repo contains the projects you'll work on throughout SPS.
+This repo contains Deepti Vaidyanathan's portfolio and SPS projects. 
 
-To get started:
+A little bit about me:
+* I am a Computer Science major at Georgia Tech focusing on Artificial Intelligence and Information/Internetworks
+* I am currently really interested in adversarial machine learning and how it ties in with other information security principles.
+![My machine learning experiences (still learning!)]
+(https://66.media.tumblr.com/a1af153b48574519cd2b72dcd4cc2cee/9de185c33fa11fe1-5f/s1280x1920/d8a8e22ce336c70f788156866baa121b6e67a8dc.jpg)
 
-- Login to [Google Cloud Shell](https://ssh.cloud.google.com/cloudshell/editor)
-- Clone this repo: `cd; git clone https://github.com/google/software-product-sprint.git`
-- Open the GitHub setup walkthrough: `teachme ~/software-product-sprint/walkthroughs/week-0-setup/github-setup-walkthrough.md`
-  - If the tutorial panel does not open or display the walkthrough contents, try refreshing the page.
-
-Then follow the on-screen instructions to set up your repo.
