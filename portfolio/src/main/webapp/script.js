@@ -17,7 +17,7 @@
  */
 function addRandomGreeting() {
   const greetings =
-      ["Don't stress, don't worry, work hard, eat curry!", 'If you compete with others you become bitter. But if you compete with yourself you become better.', "A ship in port is safe, but that's not what ships are built for.", "There's a silver lining in every dark moment, a lesson to be learned from every failure if you just pay attention."];
+      ["\"Don't stress, don't worry, work hard, eat curry!\"", '\"If you compete with others you become bitter. But if you compete with yourself you become better.\"', "\"A ship in port is safe, but that's not what ships are built for.\"", "\"There's a silver lining in every dark moment, a lesson to be learned from every failure if you just pay attention.\""];
 
   // Pick a random greeting.
   const greeting = greetings[Math.floor(Math.random() * greetings.length)];
