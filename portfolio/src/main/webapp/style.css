@@ -3,7 +3,6 @@ body {
     background-repeat: repeat-x;
 }
 #profile {
-    /* padding:0px; */
     border:5px solid darkolivegreen;
     background-color: rgba(253, 253, 243, 0.5);
     float: left;
@@ -28,9 +27,7 @@ body {
     padding: 20px;
     width: 650px;
     border: 5px solid darkolivegreen;
-    /* float: left; */
     margin-left: 400px;
-    /* margin-right: 200; */
     margin-top: 50px;
     font-family: 'Buenard';
     font-size: 18px;
