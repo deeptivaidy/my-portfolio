@@ -27,8 +27,23 @@ function addRandomGreeting() {
   greetingContainer.innerText = greeting;
 }
 
+/**
+ * Gets a comment from the server and creates a new div to display 
+ * if it does not already exist.
+ */
 async function getComment() {
-    const response = await fetch('/data');
-    const comment = await response.text();
-    document.getElementById('comment-container').innerText=comment;
+    if (document.getElementById("comment-container")) {
+        console.log("comment container exists")
+    } else {
+
+        const response = await fetch('/data');
+        const comment = await response.text();
+
+        //Creates and formats a div that shows the content
+        var d = document.createElement("div");
+        d.innerHTML = comment;
+        d.className="content";
+        d.id="comment-container"
+        document.body.appendChild(d);
+    }
 }
