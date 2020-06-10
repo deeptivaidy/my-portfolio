@@ -22,7 +22,7 @@ body {
     background-color: rgba(253, 253, 243, 0.5);
     padding:10px;
 }
-#content {
+div.content {
     background-color: rgba(253, 253, 243, 0.5);
     padding: 20px;
     width: 650px;
