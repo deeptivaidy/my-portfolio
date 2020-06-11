@@ -37,7 +37,7 @@ async function getComment() {
     } else {
 
         const response = await fetch('/data');
-        const comment = await response.text();
+        const comment = await response.json();
 
         //Creates and formats a div that shows the content
         var d = document.createElement("div");
