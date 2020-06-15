@@ -35,15 +35,22 @@ async function getComment() {
     if (document.getElementById("comment-container")) {
         console.log("comment container exists")
     } else {
-
-        const response = await fetch('/data');
-        const comment = await response.json();
-
         //Creates and formats a div that shows the content
         var d = document.createElement("div");
-        d.innerHTML = comment;
+        const response = await fetch('/data');
+        const comment = await response.json()
+            .then(data => {
+                for(const m of data) {
+                    let para = document.createElement('div');
+                    para.appendChild(document.
+                        createElement('strong')).innerHTML = m;
+                    d.appendChild(para);
+                }
+            }
+        )
         d.className="content";
         d.id="comment-container"
         document.body.appendChild(d);
+
     }
 }

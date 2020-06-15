@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Comments</title>
+        <link rel="icon" href="images/deeptea-icon.png" type="image/x-icon">
+        <link href='https://fonts.googleapis.com/css?family=Buenard' rel='stylesheet'>
+        <link rel="stylesheet" href="style.css">
+        <script src="script.js"></script>
+    </head>
+  <body onload="getComment()">
+        <div id="container" class="content">
+            <h1>Comments</h1>
+            <form action="/data" method="POST">
+                <textarea id="comments" name="comments" rows="6" cols="50"></textarea>
+                <br/><br/>
+                <input type="submit" />
+            </form>
+        </div>
+  </body>
+</html>
