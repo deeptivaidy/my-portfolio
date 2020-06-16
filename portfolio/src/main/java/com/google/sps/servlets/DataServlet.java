@@ -41,10 +41,10 @@ public class DataServlet extends HttpServlet {
         ArrayList<String> messages = new ArrayList<String>();
 
         for(Entity e : results.asIterable()) {
-            long id = e.getKey().getId();
             String content = (String) e.getProperty("content");
+            String author = (String) e.getProperty("author");
 
-            messages.add("\""+content+"\"");
+            messages.add("\""+ content + "\"" + " - " + author);
         }
         
         Gson gson = new Gson();
@@ -58,11 +58,14 @@ public class DataServlet extends HttpServlet {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String newComment = request.getParameter("comments");
+        String author = (request.getParameter("author").isEmpty() 
+            ? "Anonymous" : request.getParameter("author"));
         long timestamp = System.currentTimeMillis();
 
         Entity  commentEntity = new Entity("Comment");
-        commentEntity.setProperty("content", newComment);
         commentEntity.setProperty("timestamp", timestamp);
+        commentEntity.setProperty("content", newComment);
+        commentEntity.setProperty("author", author);
 
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         datastore.put(commentEntity);
