@@ -38,12 +38,13 @@ async function getComment() {
         //Creates and formats a div that shows the content
         var d = document.createElement("div");
         const response = await fetch('/data');
-        const comment = await response.json()
-            .then(data => {
-                for(const m of data) {
+        const comments = await response.json()
+            .then(comment => {
+                for(const m of comment) {
                     let para = document.createElement('div');
+                    let message = "\"" + m.content + "\" - " + m.author;
                     para.appendChild(document.
-                        createElement('strong')).innerHTML = m;
+                        createElement('strong')).innerHTML = message;
                     d.appendChild(para);
                 }
             }

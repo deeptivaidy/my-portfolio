@@ -21,6 +21,7 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.gson.Gson;
+import com.google.sps.data.Comment;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.io.IOException;
@@ -38,13 +39,16 @@ public class DataServlet extends HttpServlet {
 
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         PreparedQuery results = datastore.prepare(query);
-        ArrayList<String> messages = new ArrayList<String>();
+        ArrayList<Comment> messages = new ArrayList<>();
 
         for(Entity e : results.asIterable()) {
+            long id = e.getKey().getId();
             String content = (String) e.getProperty("content");
             String author = (String) e.getProperty("author");
+            long timestamp = (long)e.getProperty("timestamp");
 
-            messages.add("\""+ content + "\"" + " - " + author);
+            Comment c = new Comment(id, content, author, timestamp);
+            messages.add(c);
         }
         
         Gson gson = new Gson();
