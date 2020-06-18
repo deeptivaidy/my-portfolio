@@ -21,6 +21,7 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.gson.Gson;
+import com.google.sps.data.Comment;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.io.IOException;
@@ -38,13 +39,16 @@ public class DataServlet extends HttpServlet {
 
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         PreparedQuery results = datastore.prepare(query);
-        ArrayList<String> messages = new ArrayList<String>();
+        ArrayList<Comment> messages = new ArrayList<>();
 
         for(Entity e : results.asIterable()) {
             long id = e.getKey().getId();
             String content = (String) e.getProperty("content");
+            String author = (String) e.getProperty("author");
+            long timestamp = (long)e.getProperty("timestamp");
 
-            messages.add("\""+content+"\"");
+            Comment c = new Comment(id, content, author, timestamp);
+            messages.add(c);
         }
         
         Gson gson = new Gson();
@@ -58,11 +62,14 @@ public class DataServlet extends HttpServlet {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String newComment = request.getParameter("comments");
+        String author = (request.getParameter("author").isEmpty() 
+            ? "Anonymous" : request.getParameter("author"));
         long timestamp = System.currentTimeMillis();
 
         Entity  commentEntity = new Entity("Comment");
-        commentEntity.setProperty("content", newComment);
         commentEntity.setProperty("timestamp", timestamp);
+        commentEntity.setProperty("content", newComment);
+        commentEntity.setProperty("author", author);
 
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         datastore.put(commentEntity);
