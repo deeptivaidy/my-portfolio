@@ -8,6 +8,7 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.annotation.WebServlet;
@@ -23,13 +24,33 @@ import javax.servlet.http.HttpServletResponse;
 public class HomeServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.setContentType("text/html");
-
+        Gson gson = new Gson(); 
+        response.setContentType("application/json");
         UserService userService = UserServiceFactory.getUserService();
+        
+        //The first field is the logged-in user's email, the second field is the 
+        //URL to login/logout depending on current status
+        String[] loginStatus = new String[2];
+
+        
         if (userService.isUserLoggedIn()) {
-            response.getWriter().println("You're logged in! Hello " + userService.getCurrentUser().getEmail());
+            String userEmail = userService.getCurrentUser().getEmail();
+            String urlToRedirectToAfterUserLogsOut = "/";
+            String logoutUrl = userService.createLogoutURL(urlToRedirectToAfterUserLogsOut);
+            loginStatus[0] = userEmail;
+            loginStatus[1] = logoutUrl;
+
         } else {
-            response.getWriter().println("You aren't logged in :(");
+            String urlToRedirectToAfterUserLogsIn = "/comment.html";
+            String loginUrl = userService.createLoginURL(urlToRedirectToAfterUserLogsIn);
+
+            loginStatus[0] = "";
+            loginStatus[1] = loginUrl;
         }
+        String json = gson.toJson(loginStatus);
+        response.getWriter().println(json);
+
     }
+
+
 }
