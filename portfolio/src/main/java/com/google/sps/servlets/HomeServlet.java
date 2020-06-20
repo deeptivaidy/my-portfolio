@@ -51,6 +51,4 @@ public class HomeServlet extends HttpServlet {
         response.getWriter().println(json);
 
     }
-
-
 }
