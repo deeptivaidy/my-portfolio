@@ -20,6 +20,8 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
 import com.google.sps.data.Comment;
 import java.util.ArrayList;
@@ -61,9 +63,10 @@ public class DataServlet extends HttpServlet {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+                UserService userService = UserServiceFactory.getUserService();
+        
         String newComment = request.getParameter("comments");
-        String author = (request.getParameter("author").isEmpty() 
-            ? "Anonymous" : request.getParameter("author"));
+        String author = userService.getCurrentUser().getEmail();
         long timestamp = System.currentTimeMillis();
 
         Entity  commentEntity = new Entity("Comment");
