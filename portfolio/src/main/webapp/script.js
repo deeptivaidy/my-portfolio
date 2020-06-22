@@ -41,11 +41,11 @@ async function getComment() {
         var result = await login.json();
 
         //Checks if user is logged in
-        if (result[0].length > 0) {
+        if (result.email.length > 0) {
             document.getElementById("container").style.display = "block";
             document.getElementById("container").appendChild(
                 document.createElement('button')).innerHTML
-                 = "<a href=\"" + result[1] + "\">Logout</a>";
+                 = "<a href=\"" + result.url + "\">Logout</a>";
             var d = document.createElement("div");
             const response = await fetch('/data');
             const comments = await response.json()
@@ -65,7 +65,7 @@ async function getComment() {
             
         } else {
             var d = document.createElement("div");
-            d.innerHTML = "<button onclick=\"location.href='"+ result[1]+"'\">Login!</button>";
+            d.innerHTML = "<button onclick=\"location.href='"+ result.url+"'\">Login!</button>";
             d.className="content";
             d.id="comment-container"
             document.body.appendChild(d);
