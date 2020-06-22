@@ -9,6 +9,7 @@ import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
+import com.google.sps.data.UserLogin;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.annotation.WebServlet;
@@ -30,24 +31,20 @@ public class HomeServlet extends HttpServlet {
         
         //The first field is the logged-in user's email, the second field is the 
         //URL to login/logout depending on current status
-        String[] loginStatus = new String[2];
-
+        UserLogin lUser;
         
         if (userService.isUserLoggedIn()) {
             String userEmail = userService.getCurrentUser().getEmail();
             String urlToRedirectToAfterUserLogsOut = "/";
             String logoutUrl = userService.createLogoutURL(urlToRedirectToAfterUserLogsOut);
-            loginStatus[0] = userEmail;
-            loginStatus[1] = logoutUrl;
+            lUser = new UserLogin(userEmail, logoutUrl);
 
         } else {
             String urlToRedirectToAfterUserLogsIn = "/comment.html";
             String loginUrl = userService.createLoginURL(urlToRedirectToAfterUserLogsIn);
-
-            loginStatus[0] = "";
-            loginStatus[1] = loginUrl;
+            lUser = new UserLogin("", loginUrl);
         }
-        String json = gson.toJson(loginStatus);
+        String json = gson.toJson(lUser);
         response.getWriter().println(json);
 
     }
