@@ -35,23 +35,41 @@ async function getComment() {
     if (document.getElementById("comment-container")) {
         console.log("comment container exists")
     } else {
+        document.getElementById("container").style.display = "none";
         //Creates and formats a div that shows the content
-        var d = document.createElement("div");
-        const response = await fetch('/data');
-        const comments = await response.json()
-            .then(comment => {
-                for(const m of comment) {
-                    let para = document.createElement('div');
-                    let message = "\"" + m.content + "\" - " + m.author;
-                    para.appendChild(document.
-                        createElement('strong')).innerHTML = message;
-                    d.appendChild(para);
-                }
-            }
-        )
-        d.className="content";
-        d.id="comment-container"
-        document.body.appendChild(d);
+        var login = await fetch('/login');
+        var result = await login.json();
 
+        //Checks if user is logged in
+        if (result.email.length > 0) {
+            document.getElementById("container").style.display = "block";
+            document.getElementById("container").appendChild(
+                document.createElement('button')).innerHTML
+                 = "<a href=\"" + result.url + "\">Logout</a>";
+            var d = document.createElement("div");
+            const response = await fetch('/data');
+            const comments = await response.json()
+                .then(comment => {
+                    for(const m of comment) {
+                        let para = document.createElement('div');
+                        let message = "\"" + m.content + "\" - " + m.author;
+                        para.appendChild(document.
+                            createElement('strong')).innerHTML = message;
+                        d.appendChild(para);
+                    }
+                }
+            );
+            d.className="content";
+            d.id="comment-container"
+            document.body.appendChild(d);
+            
+        } else {
+            var d = document.createElement("div");
+            d.innerHTML = "<button onclick=\"location.href='"+ result.url+"'\">Login!</button>";
+            d.className="content";
+            d.id="comment-container"
+            document.body.appendChild(d);
+        }
+        
     }
 }
