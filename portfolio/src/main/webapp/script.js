@@ -52,7 +52,7 @@ async function getComment() {
                 .then(comment => {
                     for(const m of comment) {
                         let para = document.createElement('div');
-                        let message = "\"" + m.content + "\" - " + m.author;
+                        let message = "\"" + m.content + "\" - <i>" + m.author + "</i>";
                         para.appendChild(document.
                             createElement('strong')).innerHTML = message;
                         d.appendChild(para);
