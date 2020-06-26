@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.HashMap;
 
 public final class FindMeetingQuery {
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
@@ -32,14 +32,22 @@ public final class FindMeetingQuery {
         // throw new UnsupportedOperationException("TODO: Implement this method.");
         Collection<TimeRange> validTimes = new ArrayList<TimeRange>();
         Collection<Event> attendeeEvents = getAttendeeEvents(events, request.getAttendees());
+        
         int start = TimeRange.START_OF_DAY;
+        Event current;
+        while (!attendeeEvents.isEmpty()) {
+            current = attendeeEvents.remove();
+            validTimes.add(TimeRange.fromStartEnd(start, current.start(), false));
+
+        }
         return validTimes;
         }
 
     }
   
-    private Collection<Event> getAttendeeEvents(Collection<Event> events, Collection<String> attendees) {
-        Collection<Event> aEvents = new HashSet<Event>();
+    private Event[] getAttendeeEvents(Collection<Event> events, Collection<String> attendees) {
+        //Hashmap with TimeRange keys allows us to sort the keys by start time and thereby sort the events
+        HashMap<TimeRange, Event> aEvents = new HashMap<TimeRange, Event>();
         for (Event e : events) {
             //People in event e
             Collection <String> ePeople = new ArrayList<String>(e.getAttendees());
@@ -50,9 +58,23 @@ public final class FindMeetingQuery {
             //If there is someone in event e who is also in our meeting, 
             //add to event list to consider while scheduling our meeting
             if(!ePeople.isEmpty()) {
-                aEvents.add(e);
+                aEvents.put(e.getWhen(), e);
             }
         }
-        return aEvents;
+        
+        ArrayList<TimeRange> sortedRanges= new ArrayList<TimeRange>(aEvents.keySet());
+        //  for(TimeRange range : sortedRanges) {
+        //     System.out.println(range);
+        // }
+        // System.out.println("\n");
+        Collections.sort(sortedRanges, TimeRange.ORDER_BY_START);
+        ArrayList <Event> sortedEvents = new ArrayList<Event>();
+        
+        for(TimeRange range : sortedRanges) {
+            // System.out.println(range);
+            sortedEvents.add(aEvents.get(range));
+        }
+        System.out.println("_____________________________________");
+        return sortedEvents.toArray();
     }
 }
