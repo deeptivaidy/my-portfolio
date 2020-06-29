@@ -24,21 +24,35 @@ import java.util.HashMap;
 public final class FindMeetingQuery {
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
     //Checks if we have a valid meeting duration and attendees
-    if (request.getDuration() > (24*60)) {
+    if (request.getDuration() > TimeRange.WHOLE_DAY.duration()) {
         return Arrays.asList();
     } else if(request.getAttendees().isEmpty()) {
         return Arrays.asList(TimeRange.WHOLE_DAY);
     } else {
-        // throw new UnsupportedOperationException("TODO: Implement this method.");
         Collection<TimeRange> validTimes = new ArrayList<TimeRange>();
-        Collection<Event> attendeeEvents = getAttendeeEvents(events, request.getAttendees());
+        Event[] attendeeEvents = getAttendeeEvents(events, request.getAttendees());
         
         int start = TimeRange.START_OF_DAY;
-        Event current;
-        while (!attendeeEvents.isEmpty()) {
-            current = attendeeEvents.remove();
-            validTimes.add(TimeRange.fromStartEnd(start, current.start(), false));
+        int i = 0;
 
+        while (i < attendeeEvents.length) {
+            //Create a new time range the start to the beginning of next event
+            TimeRange valid = TimeRange.fromStartEnd(start, attendeeEvents[i].getWhen().start(), false);
+            if (valid.duration() >= request.getDuration()) {
+                validTimes.add(valid);
+            }
+                
+            if ((i+1) < attendeeEvents.length && attendeeEvents[i].getWhen().overlaps(attendeeEvents[i+1].getWhen())) {
+                start = (attendeeEvents[i].getWhen().end() > attendeeEvents[i+1].getWhen().end() ? attendeeEvents[i].getWhen().end() : attendeeEvents[i + 1].getWhen().end());
+                i++;
+            } else {
+                start = attendeeEvents[i].getWhen().end();
+            }
+            i++;
+
+        }
+        if (TimeRange.END_OF_DAY - start >= request.getDuration()) {
+            validTimes.add(TimeRange.fromStartEnd(start, TimeRange.END_OF_DAY, true));
         }
         return validTimes;
         }
@@ -63,18 +77,13 @@ public final class FindMeetingQuery {
         }
         
         ArrayList<TimeRange> sortedRanges= new ArrayList<TimeRange>(aEvents.keySet());
-        //  for(TimeRange range : sortedRanges) {
-        //     System.out.println(range);
-        // }
-        // System.out.println("\n");
         Collections.sort(sortedRanges, TimeRange.ORDER_BY_START);
-        ArrayList <Event> sortedEvents = new ArrayList<Event>();
         
-        for(TimeRange range : sortedRanges) {
-            // System.out.println(range);
-            sortedEvents.add(aEvents.get(range));
+        Event[] sortedArray = new Event[sortedRanges.size()];
+
+        for (int i = 0; i < sortedArray.length; i++) {
+            sortedArray[i] = aEvents.get(sortedRanges.get(i));
         }
-        System.out.println("_____________________________________");
-        return sortedEvents.toArray();
+        return sortedArray;
     }
 }
