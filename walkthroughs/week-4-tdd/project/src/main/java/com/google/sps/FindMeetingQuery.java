@@ -47,13 +47,32 @@ public final class FindMeetingQuery {
 
         //Iterates through the meeting attendees' events to find open time ranges
         while (i < attendeeEvents.length) {
+
+            //If the current event occurs before our next possible start time, it means there 
+            //are multiple events overlapping with a single large event, and we can skip this event
+            if (attendeeEvents[i].getWhen().end() < start) {
+                i++;
+                continue;
+            }
+            
+            //if the current event overlaps but does not pass the previous condition, then
+            //out current event ends after "start", meaning we must update "start" and skip this event
+            if(attendeeEvents[i].getWhen().contains(start)) {
+                start = attendeeEvents[i].getWhen().end();
+                i++;
+                continue;
+            }
+
             //Create a new time range the start to the beginning of next event
             TimeRange valid = TimeRange.fromStartEnd(start, attendeeEvents[i].getWhen().start(), false);
+
             if (valid.duration() >= request.getDuration()) {
                 validTimes.add(valid);
             }
-                
+            
+            //Checks if the next event exists and overlaps with the current event
             if ((i+1) < attendeeEvents.length && attendeeEvents[i].getWhen().overlaps(attendeeEvents[i+1].getWhen())) {
+                //start will be set to whichever end is larger and will skip the next event
                 start = (attendeeEvents[i].getWhen().end() > attendeeEvents[i+1].getWhen().end() ? attendeeEvents[i].getWhen().end() : attendeeEvents[i + 1].getWhen().end());
                 i++;
             } else {
@@ -77,29 +96,26 @@ public final class FindMeetingQuery {
      */
     private Event[] getAttendeeEvents(Collection<Event> events, Collection<String> attendees) {
         //Hashmap with TimeRange keys allows us to sort the keys by start time and thereby sort the events
-        HashMap<TimeRange, Event> aEvents = new HashMap<TimeRange, Event>();
+        HashMap<TimeRange, Event> attendeeEvents = new HashMap<TimeRange, Event>();
         for (Event e : events) {
             //People in event e
-            Collection <String> ePeople = new ArrayList<String>(e.getAttendees());
-
-            //The attendees of our meeting that are in event e as well
-            ePeople.retainAll(attendees);
+            Collection <String> eventPeople = new ArrayList<String>(e.getAttendees());
 
             //If there is someone in event e who is also in our meeting, 
             //add to event list to consider while scheduling our meeting
-            if(!ePeople.isEmpty()) {
-                aEvents.put(e.getWhen(), e);
+            if(!Collections.disjoint(eventPeople, attendees)) {
+                attendeeEvents.put(e.getWhen(), e);
             }
         }
         
         //Sorts the events based on start time
-        ArrayList<TimeRange> sortedRanges= new ArrayList<TimeRange>(aEvents.keySet());
+        ArrayList<TimeRange> sortedRanges= new ArrayList<TimeRange>(attendeeEvents.keySet());
         Collections.sort(sortedRanges, TimeRange.ORDER_BY_START);
         
         Event[] sortedArray = new Event[sortedRanges.size()];
 
         for (int i = 0; i < sortedArray.length; i++) {
-            sortedArray[i] = aEvents.get(sortedRanges.get(i));
+            sortedArray[i] = attendeeEvents.get(sortedRanges.get(i));
         }
         return sortedArray;
     }
